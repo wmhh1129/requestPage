@@ -5,37 +5,93 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 	<title>Title</title>
 </head>
-<link rel="stylesheet"
-      href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css"
-      integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
-      crossorigin="anonymous">
+<style>
+	* {
+		padding: 0;
+		margin: 0;
+	}
+
+	header {
+		background-color: #36b6ac;
+		color: #fff;
+		height: 40px;
+		line-height: 40px;
+		text-align: center;
+	}
+
+	input {
+		border: none;
+		border-bottom: 1px solid #ccc;
+		width: 100%;
+		padding-left: 110px;
+		height: 50px;
+	}
+
+	.user-name, .user-account {
+		position: relative;
+		width: 100%;
+	}
+
+	span {
+		position: absolute;
+		left: 16px;
+		top: 15px;
+		font-size: 14px;
+	}
+
+	.btn-wrapper {
+		text-align: center;
+	}
+
+	.btn-wrapper .btn {
+		height: 30px;
+		width: 80%;
+		background-color: #36b6ac;
+		color: #fff;
+		margin-top: 20px;
+	}
+</style>
 <body>
-	<div class="container-fluid">
-		<div class="row">
-			<div class="col-xs-12 col-md-8">
-				<label for="name">申请人:</label><input id="name" type="text">
-
-			</div>
-			<div class="col-xs-12 col-md-4">
-				<label for="mobile">手机号码</label><input id="mobile" type="text">
-			</div>
-			<div class="col-xs-12 col-md-4">
-				<button type="button">申请</button>
-			</div>
+	<div class="container">
+		<header>申请登录</header>
+		<div class="user-name">
+			<span>申请人</span>
+			<input id="name" type="text" placeholder="姓名">
 		</div>
-
-		<!-- Columns start at 50% wide on mobile and bump up to 33.3% wide on desktop -->
-		<div class="row">
-			<div class="col-xs-6 col-md-4">.col-xs-6 .col-md-4</div>
-			<div class="col-xs-6 col-md-4">.col-xs-6 .col-md-4</div>
-			<div class="col-xs-6 col-md-4">.col-xs-6 .col-md-4</div>
+		<div class="user-account">
+			<span>申请人账号</span>
+			<input id="mobile" type="text" placeholder="手机号">
 		</div>
-
-		<!-- Columns are always 50% wide, on mobile and desktop -->
-		<div class="row">
-			<div class="col-xs-6">.col-xs-6</div>
-			<div class="col-xs-6">.col-xs-6</div>
+		<div class="btn-wrapper">
+			<button id="btn" class="btn" onclick="submit()" type="button">申请</button>
 		</div>
 	</div>
+	<script>
+		window.onload = function () {
+			const user = document.getElementById('name')
+			const mobile = document.getElementById('mobile')
+			const btn = document.getElementById('btn')
+			btn.onclick = function () {
+				const url = 'http://www-alpha.qijigps.com/api/v2.8/temp/auth'
+				const reqBody = {
+					apply_name: user.value,
+					apply_mobile: mobile.value
+				}
+				if (reqBody) {
+					const xhr = new XMLHttpRequest()
+					xhr.withCredentials = true
+					xhr.open('post', url, true)
+					xhr.send(reqBody)
+					xhr.onreadystatechange = function () {
+						if (xhr.readyState === 4 && xhr.status === 200) {
+							if (xhr.responseText) {
+								alert('申请成功')
+							}
+						}
+					}
+				}
+			}
+		}
+	</script>
 </body>
 </html>
