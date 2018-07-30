@@ -17,6 +17,7 @@
 		height: 40px;
 		line-height: 40px;
 		text-align: center;
+		box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
 	}
 
 	input {
@@ -30,6 +31,11 @@
 	.user-name, .user-account {
 		position: relative;
 		width: 100%;
+	}
+
+	.user-name {
+		margin-top: 20px;
+		border-top: 1px solid #ccc;
 	}
 
 	span {
@@ -59,8 +65,8 @@
 			<input id="name" type="text" placeholder="姓名">
 		</div>
 		<div class="user-account">
-			<span>申请人账号</span>
-			<input id="mobile" type="text" placeholder="手机号">
+			<span>申请人手机</span>
+			<input id="mobile" type="text" placeholder="手机号" maxlength="11">
 		</div>
 		<div class="btn-wrapper">
 			<button id="btn" class="btn" onclick="submit()" type="button">申请</button>
@@ -73,23 +79,36 @@
 			const btn = document.getElementById('btn')
 			btn.onclick = function () {
 				const url = 'http://www-alpha.qijigps.com/api/v2.8/temp/auth'
-				const reqBody = {
+				const obj = {
 					apply_name: user.value,
 					apply_mobile: mobile.value
 				}
-				if (reqBody) {
-					const xhr = new XMLHttpRequest()
-					xhr.withCredentials = true
-					xhr.open('post', url, true)
-					xhr.send(reqBody)
-					xhr.onreadystatechange = function () {
-						if (xhr.readyState === 4 && xhr.status === 200) {
-							if (xhr.responseText) {
-								alert('申请成功')
+				const phonePattern = /^(13|14|15|16|17|18)\d{9}$/
+				if (obj.apply_mobile && obj.apply_name) {
+					if (phonePattern.test(obj.apply_mobile)) {
+						const reqBody = JSON.stringify(obj)
+						if (reqBody) {
+							const xhr = new XMLHttpRequest()
+							xhr.open('post', url, true)
+							xhr.send(reqBody)
+							xhr.onreadystatechange = function () {
+								if (xhr.readyState === 4 && xhr.status === 200) {
+									const result = JSON.parse(JSON.stringify(xhr.responseText))
+									if (result.status === 0) {
+										alert('申请临时登录凭证成功，请留意您的手机验证码')
+									}
+								}
 							}
 						}
+					} else {
+						alert('手机格式有误,请重新校验')
+						return false
 					}
+				} else {
+					alert('申请人跟手机号都为必填信息，请重新校验')
+					return false
 				}
+
 			}
 		}
 	</script>
